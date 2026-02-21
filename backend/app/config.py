@@ -1,7 +1,6 @@
 from typing import List
 
-from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,20 +13,18 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 100
     TOP_K: int = 6
 
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://your-vercel-app.vercel.app",
-    ]
+    ALLOWED_ORIGINS: str = (
+        "http://localhost:3000,"
+        "http://localhost:5173,"
+        "https://your-vercel-app.vercel.app"
+    )
 
-    model_config = SettingsConfigDict(env_file=".env", env_parse_delimiter=",")
+    @property
+    def allowed_origins(self) -> List[str]:
+        return [item.strip() for item in self.ALLOWED_ORIGINS.split(",") if item.strip()]
 
-    @field_validator("ALLOWED_ORIGINS", mode="before")
-    @classmethod
-    def _split_origins(cls, value):
-        if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
-        return value
+    class Config:
+        env_file = ".env"
 
 
 settings = Settings()
