@@ -1,7 +1,7 @@
 from typing import List
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -20,15 +20,14 @@ class Settings(BaseSettings):
         "https://your-vercel-app.vercel.app",
     ]
 
+    model_config = SettingsConfigDict(env_file=".env", env_parse_delimiter=",")
+
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
     def _split_origins(cls, value):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
-
-    class Config:
-        env_file = ".env"
 
 
 settings = Settings()
