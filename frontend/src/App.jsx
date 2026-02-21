@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -154,7 +156,13 @@ export default function App() {
               <span>Show retrieved chunks</span>
             </label>
           </div>
-          <p className="answer-body">{answer || "Ask a question to see grounded answers here."}</p>
+          <div className="answer-body">
+            {answer ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
+            ) : (
+              <p>Ask a question to see grounded answers here.</p>
+            )}
+          </div>
         </section>
 
         <section className="panel sources">

@@ -177,6 +177,24 @@ button:disabled {
   white-space: pre-wrap;
 }
 
+.answer-body h2,
+.answer-body h3 {
+  margin-top: 0;
+}
+
+.answer-body ul {
+  padding-left: 20px;
+  margin: 12px 0 0;
+}
+
+.answer-body li {
+  margin-bottom: 8px;
+}
+
+.answer-body strong {
+  color: var(--accent);
+}
+
 .toggle {
   display: flex;
   gap: 8px;

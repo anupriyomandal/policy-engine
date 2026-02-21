@@ -34,9 +34,9 @@ def answer_with_context(query: str, context: str) -> str:
     prompt = (
         "You are a policy intelligence assistant. Answer the question using only the sources. "
         "If the answer is not contained in the sources, say you don't have enough information. "
-        "Return a short Markdown response with a 1-line title and 4-8 bullet points. "
-        "Each bullet should be a crisp statement. "
-        "Do not include source IDs or citations in the answer."
+        "Return clean Markdown with a 1-line title (\"## Title\"), then 4-8 bullet points. "
+        "Each bullet should start with a bolded label like **Requirement:** or **Rule:** and be concise. "
+        "Do not include source IDs or citations in the answer. "
         "Do not write long paragraphs."
     )
     response = _client.chat.completions.create(
