@@ -25,6 +25,10 @@ def create_app() -> FastAPI:
     # Include API routes
     app.include_router(api_router)
 
+    @app.get("/health")
+    def health() -> dict:
+        return {"status": "ok"}
+
     @app.on_event("startup")
     def on_startup() -> None:
         init_db()

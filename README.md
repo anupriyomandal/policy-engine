@@ -16,6 +16,7 @@ Create `backend/.env`:
 ```
 OPENAI_API_KEY=your_key_here
 DATABASE_URL=postgresql+psycopg2://localhost:5432/rag_policy
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://your-vercel-app.vercel.app
 EMBEDDING_MODEL=text-embedding-3-small
 CHAT_MODEL=gpt-4.1-mini
 EMBEDDING_DIMENSION=1536
@@ -56,6 +57,7 @@ VITE_API_URL=https://your-backend-domain
    - Optional: `EMBEDDING_MODEL`, `CHAT_MODEL`, `EMBEDDING_DIMENSION`, `CHUNK_SIZE`, `CHUNK_OVERLAP`, `TOP_K`
 4. Start command (already in `backend/railway.toml`):
    - `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Health check endpoint: `/health`
 
 ## Deploy: Vercel (Frontend)
 
@@ -66,7 +68,7 @@ VITE_API_URL=https://your-backend-domain
 
 ## CORS
 
-If you deploy the frontend, add your Vercel domain to `ALLOWED_ORIGINS` in `backend/app/config.py`.
+If you deploy the frontend, add your Vercel domain to `ALLOWED_ORIGINS` (comma-separated) in `backend/.env` or Railway envs.
 
 ## Notes
 - This project uses pgvector. Your Postgres must have the `vector` extension installed.

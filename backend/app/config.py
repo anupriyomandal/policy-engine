@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings
 from typing import List
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -17,6 +19,13 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "https://your-vercel-app.vercel.app",
     ]
+
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def _split_origins(cls, value):
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
 
     class Config:
         env_file = ".env"
