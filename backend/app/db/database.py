@@ -7,6 +7,8 @@ from app.config import settings
 
 # Railway provides DATABASE_URL
 DATABASE_URL = settings.DATABASE_URL
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
 
 
 # Engine
