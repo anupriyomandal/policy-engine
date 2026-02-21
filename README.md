@@ -56,7 +56,7 @@ VITE_API_URL=https://your-backend-domain
    - `DATABASE_URL` (from Railway Postgres)
    - Optional: `EMBEDDING_MODEL`, `CHAT_MODEL`, `EMBEDDING_DIMENSION`, `CHUNK_SIZE`, `CHUNK_OVERLAP`, `TOP_K`
 4. Start command (already in `backend/railway.toml`):
-   - `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - `sh -c "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"`
 5. Health check endpoint: `/health`
 
 ## Deploy: Vercel (Frontend)
