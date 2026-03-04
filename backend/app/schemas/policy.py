@@ -12,6 +12,7 @@ class UploadResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     query: str = Field(..., min_length=3)
+    document_id: Optional[UUID] = None
     top_k: Optional[int] = None
     include_sources: bool = True
 

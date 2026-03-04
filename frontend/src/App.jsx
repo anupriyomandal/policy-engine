@@ -28,6 +28,7 @@ const highlightText = (text, query) => {
 
 export default function App() {
   const [file, setFile] = useState(null);
+  const [currentDocumentId, setCurrentDocumentId] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("Idle");
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
@@ -58,6 +59,7 @@ export default function App() {
         throw new Error("Upload failed");
       }
       const data = await response.json();
+      setCurrentDocumentId(data.document_id);
       setUploadStatus(`Uploaded ${data.filename} (${data.chunks_created} chunks)`);
     } catch (error) {
       setUploadStatus("Upload failed. Check backend logs.");
@@ -67,13 +69,23 @@ export default function App() {
   const handleQuery = async (event) => {
     event.preventDefault();
     if (!query.trim()) return;
+    if (!currentDocumentId) {
+      setAnswer("Upload a document first. Queries are scoped to the latest uploaded file.");
+      setConfidence(0);
+      setSources([]);
+      return;
+    }
 
     try {
       setIsQuerying(true);
       const response = await fetch(`${API_BASE}/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, include_sources: true }),
+        body: JSON.stringify({
+          query,
+          document_id: currentDocumentId,
+          include_sources: true,
+        }),
       });
       if (!response.ok) {
         throw new Error("Query failed");

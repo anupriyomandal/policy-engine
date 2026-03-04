@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
+from uuid import UUID
 
 from openai import OpenAI
 from sqlalchemy.orm import Session
@@ -10,15 +11,20 @@ from app.db.models import Chunk, Document
 _client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
-def retrieve_chunks(db: Session, query_embedding: List[float], top_k: int) -> List[Tuple[Chunk, float, str]]:
+def retrieve_chunks(
+    db: Session,
+    query_embedding: List[float],
+    top_k: int,
+    document_id: Optional[UUID] = None,
+) -> List[Tuple[Chunk, float, str]]:
     distance = Chunk.embedding.cosine_distance(query_embedding)
-    results = (
+    query = (
         db.query(Chunk, distance.label("distance"), Document.filename)
         .join(Document, Document.id == Chunk.document_id)
-        .order_by(distance)
-        .limit(top_k)
-        .all()
     )
+    if document_id is not None:
+        query = query.filter(Chunk.document_id == document_id)
+    results = query.order_by(distance).limit(top_k).all()
     return [(row[0], row[1], row[2]) for row in results]
 
 

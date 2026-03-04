@@ -66,9 +66,16 @@ async def upload_doc(file: UploadFile = File(...), db: Session = Depends(get_db)
 @router.post("/query", response_model=QueryResponse)
 def query_policy(payload: QueryRequest, db: Session = Depends(get_db)) -> QueryResponse:
     top_k = payload.top_k or settings.TOP_K
+    target_document_id = payload.document_id
+
+    if target_document_id is None:
+        latest_document = db.query(Document).order_by(Document.uploaded_at.desc()).first()
+        if latest_document is None:
+            return QueryResponse(answer="No documents found. Upload a document first.", confidence=0.0, sources=[])
+        target_document_id = latest_document.id
 
     query_embedding = embed_texts([payload.query])[0]
-    results = retrieve_chunks(db, query_embedding, top_k)
+    results = retrieve_chunks(db, query_embedding, top_k, document_id=target_document_id)
 
     if not results:
         return QueryResponse(answer="No relevant sources found.", confidence=0.0, sources=[])
